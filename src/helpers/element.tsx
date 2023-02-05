@@ -1,4 +1,4 @@
-import { ElementType } from "react";
+import { ElementType, useCallback, useRef } from "react";
 import { RenderElementProps } from "slate-react";
 
 type ElementRenderer = Record<string, ElementType>;
@@ -9,14 +9,17 @@ export interface UseElementHelper {
 }
 
 export const useElementHelper = (): UseElementHelper => {
-  const elementRenderer: ElementRenderer = {};
+  const elementRenderer = useRef<ElementRenderer>({});
 
-  const addElement = (type: string, element: ElementType) => {
-    elementRenderer[type] = element;
-  };
+  const addElement = useCallback(
+    (type: string, element: ElementType) => {
+      elementRenderer.current[type] = element;
+    },
+    [elementRenderer]
+  );
 
   const renderElement = ({ attributes, children, element }: RenderElementProps) => {
-    const Component = elementRenderer[element.type] ?? "p";
+    const Component = elementRenderer.current[element.type] ?? "p";
     return <Component {...attributes}>{children}</Component>;
   };
 

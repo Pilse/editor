@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 
 const Underline = ({ children }: PropsWithChildren) => {
-  return <em>{children}</em>;
+  return <u>{children}</u>;
 };
 
 export default Underline;

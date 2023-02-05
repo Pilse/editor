@@ -1,4 +1,4 @@
-import { ElementType } from "react";
+import { ElementType, useCallback, useRef } from "react";
 import { RenderLeafProps } from "slate-react";
 
 type LeafRenderer = Record<string, ElementType>;
@@ -9,15 +9,18 @@ export interface UseLeafHelper {
 }
 
 export const useLeafHelper = (): UseLeafHelper => {
-  const leafRenderer: LeafRenderer = {};
+  const leafRenderer = useRef<LeafRenderer>({});
 
-  const addLeaf = (type: string, leaf: ElementType) => {
-    leafRenderer[type] = leaf;
-  };
+  const addLeaf = useCallback(
+    (type: string, leaf: ElementType) => {
+      leafRenderer.current[type] = leaf;
+    },
+    [leafRenderer]
+  );
 
   const renderLeaf = ({ attributes, children, leaf }: RenderLeafProps) => {
     Object.keys(leaf).forEach((key) => {
-      const Component = leafRenderer[key];
+      const Component = leafRenderer.current[key];
       if (Component) children = <Component>{children}</Component>;
     });
     return <span {...attributes}>{children}</span>;
