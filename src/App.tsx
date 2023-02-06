@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Editable, withReact, Slate } from "slate-react";
 import { createEditor, Descendant } from "slate";
 import { withHistory } from "slate-history";
-import { useElementHelper, useLeafHelper } from "./helpers";
+import { useElementHelper, useLeafHelper, useToolHelper } from "./helpers";
 import { Heading1, Heading2, Heading3, Paragraph } from "./components/elements";
 import { Bold, Italic, Strike, Underline } from "./components/leaves";
-import { useToolHelper } from "./helpers/tool";
 
 function App() {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
@@ -16,7 +15,7 @@ function App() {
   const { addLeaf, renderLeaf } = useLeafHelper();
   const { tools, addBlockTool, addMarkTool } = useToolHelper(editor);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     addElement("p", Paragraph);
     addElement("h1", Heading1);
     addElement("h2", Heading2);
@@ -43,8 +42,8 @@ function App() {
   return (
     <Slate editor={editor} value={value} onChange={handleValueChange}>
       <div>
-        {tools.map(({ onClick, icon }) => (
-          <button onClick={onClick} key={Math.random()}>
+        {tools.map(({ onMouseDown, icon }) => (
+          <button onMouseDown={onMouseDown} key={Math.random()}>
             {icon}
           </button>
         ))}
@@ -60,7 +59,7 @@ const initialValue: Descendant[] = [
     children: [{ text: "hello world" }],
   },
   {
-    type: "p",
+    type: "h1",
     children: [{ text: "heading", strike: true }],
   },
 ];

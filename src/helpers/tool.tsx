@@ -7,12 +7,10 @@ type ToolConfig = {
   toggleable: boolean;
 };
 
-type ToolHandler = {
-  onClick: (event: MouseEvent) => void;
+type Tool = ToolConfig & {
+  onMouseDown: (event: MouseEvent) => void;
   isActive: () => boolean;
 };
-
-type Tool = ToolConfig & ToolHandler;
 
 interface UseToolHelper {
   tools: Tool[];
@@ -43,8 +41,8 @@ export const useToolHelper = (editor: Editor): UseToolHelper => {
 
   const handleBlockToolClick = useCallback(
     (event: MouseEvent, type: string, toggleable: boolean = true) => {
-      console.log(event);
       event.preventDefault();
+
       const isSelectedBlockHaveType = toggleable && doesSelectedBlockHaveType(editor, type);
 
       if (isSelectedBlockHaveType) Transforms.unsetNodes(editor, "type");
@@ -56,6 +54,7 @@ export const useToolHelper = (editor: Editor): UseToolHelper => {
   const handleMarkToolClick = useCallback(
     (event: MouseEvent, type: string, toggleable: boolean = true) => {
       event.preventDefault();
+
       const isSelectedTextHaveType = toggleable && doesSelectiveTextHaveMark(editor, type);
 
       if (isSelectedTextHaveType) Editor.removeMark(editor, type);
@@ -72,7 +71,7 @@ export const useToolHelper = (editor: Editor): UseToolHelper => {
           type,
           icon,
           toggleable,
-          onClick: (event: MouseEvent) => handleBlockToolClick(event, type),
+          onMouseDown: (event: MouseEvent) => handleBlockToolClick(event, type),
           isActive: () => doesSelectedBlockHaveType(editor, type),
         },
       ]),
@@ -87,7 +86,7 @@ export const useToolHelper = (editor: Editor): UseToolHelper => {
           type,
           icon,
           toggleable,
-          onClick: (event: MouseEvent) => handleMarkToolClick(event, type),
+          onMouseDown: (event: MouseEvent) => handleMarkToolClick(event, type),
           isActive: () => doesSelectiveTextHaveMark(editor, type),
         },
       ]),
