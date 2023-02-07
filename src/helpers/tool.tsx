@@ -1,5 +1,6 @@
 import { MouseEvent, ReactNode, useCallback, useState } from "react";
 import { Editor, Element, Transforms } from "slate";
+import { useSlate } from "slate-react";
 
 type ToolConfig = {
   type: string;
@@ -7,7 +8,7 @@ type ToolConfig = {
   toggleable: boolean;
 };
 
-type Tool = ToolConfig & {
+export type Tool = ToolConfig & {
   onMouseDown: (event: MouseEvent) => void;
   isActive: () => boolean;
 };
@@ -18,7 +19,9 @@ interface UseToolHelper {
   addMarkTool: (config: ToolConfig) => void;
 }
 
-export const useToolHelper = (editor: Editor): UseToolHelper => {
+export const useToolHelper = (): UseToolHelper => {
+  const editor = useSlate();
+
   const [tools, setTools] = useState<Tool[]>([]);
 
   const doesSelectedBlockHaveType = (editor: Editor, type: string) => {
@@ -35,7 +38,7 @@ export const useToolHelper = (editor: Editor): UseToolHelper => {
 
   const doesSelectiveTextHaveMark = (editor: Editor, type: string) => {
     const marks = Editor.marks(editor);
-
+    console.log(editor.marks, type);
     return marks === null ? false : Boolean(marks[type]);
   };
 
